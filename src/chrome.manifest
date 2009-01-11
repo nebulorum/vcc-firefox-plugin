@@ -1,0 +1,3 @@
+content dndicapture content/
+skin dndicapture classic/1.0 skin/
+overlay chrome://browser/content/browser.xul chrome://dndicapture/content/dndicapture.xul

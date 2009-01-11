@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+<Description about="urn:mozilla:install-manifest">
+<!-- Required Items -->
+<em:id>dndicapture@exnebula.org</em:id>
+<em:name>D&amp;D Insider Capture</em:name>
+<em:version>1.0</em:version>
+
+<em:targetApplication>
+     <Description>
+         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+         <em:minVersion>1.5</em:minVersion>
+         <em:maxVersion>3.0.*</em:maxVersion>
+     </Description>
+</em:targetApplication>
+
+<!-- Optional Items -->
+<em:creator>Thomas Santana</em:creator>
+<em:description>D&mp;D Insider Captures allows you to capture information from the Insider site and send them to the Virtual Combat Cards encounter editor.</em:description>
+<em:homepageURL>http://www.exnebula.org/vcc</em:homepageURL>
+</Description>
+</RDF>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<overlay id="Scrapper-Overlay"
+xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<script type="application/x-javascript" src="chrome://dndicapture/content/capture.js" />
+<toolbox id="navigator-toolbox">
+   <toolbar id="dndicaptureToolBar" toolbarname="D&amp;D Insider Capture Toolbar" align="center" >
+	   <toolbarbutton label="D&amp;D Insider Compendium"
+	     oncommand="dndiHome(event)"
+		 image="chrome://dndicapture/skin/images/wizard.ico"/>
+	   <toolbarseparator />
+       <label value="Remote URL: "/>
+       <textbox id="dndiVccUrl" cols="1" size="50" />
+       <toolbarbutton id="dndiCapture"
+	     image="chrome://dndicapture/skin/images/page_white_go.png"
+         label="Capture" oncommand="dndiCapture(event)" />
+   </toolbar>
+</toolbox>
+</overlay>
