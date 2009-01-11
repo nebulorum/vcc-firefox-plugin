@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DNDICapture" default="dist" basedir=".">
+	<target name="dist">
+		<zip destfile="dist/dndicapture.xpi" basedir="src" >
+			<include name="chrome.manifest"/>
+			<include name="install.rdf" />
+			<include name="content/*" />
+			<include name="skin/*/*" />
+		</zip>
+	</target>
+</project>
