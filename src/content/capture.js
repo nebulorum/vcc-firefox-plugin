@@ -27,7 +27,7 @@ function dndiDoCapture(url) {
          if(xmlHttp.readyState  == 4)
          {
               if(xmlHttp.status  == 200) 
-                  alert("Data sent to remote server sucessfully.") 
+                  alert(xmlHttp.responseText) 
               else 
                  alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
          }
