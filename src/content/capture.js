@@ -25,8 +25,8 @@ function dndiGetHTTPRequest() {
 }
 
 function dndiHome(event) {
-   var url="http://www.wizards.com/dndinsider/compendium/database.aspx"
-   window._content.document.location  = url
+  var url="http://www.wizards.com/dndinsider/compendium/database.aspx"
+  window._content.document.location  = url
 }
 
 function dndiGetID(url) {
@@ -38,37 +38,55 @@ function dndiGetID(url) {
     return null
 }
 
+/*
+ * This function will try to find the DIV with ID="detail", if it fails it 
+ * will look for Iframes with that div.
+ */
+function dndiFindSection() {
+	var doc=window.content.document
+	
+	while(doc != null) {
+		var data = doc.getElementById("detail")
+		var id = dndiGetID(doc.location)
+		
+		if(id != null && data != null) {
+			var ndata= data.cloneNode(true);
+			ndata.setAttribute("id",id)
+			return ndata;
+		}
+		
+		// Go down IFrame 
+		var res = doc.evaluate("//iframe",doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null );
+
+		if(res != null && res.singleNodeValue != null)
+			doc = res.singleNodeValue.contentWindow.document
+		else 
+			doc = null
+	}
+	return null
+}
+
+
 function dndiDoCapture(url) { 
-  var data=window.content.document.getElementById("detail")
-  var id = dndiGetID(window.content.document.location)
+  var data=dndiFindSection()
   
-  if(id == null) {
-  	alert("This page URL does not contain and ID parameter. Please make sure you are viewing a D&D Insider result page.")
-  	return 0;
-  }
   if(data==null) {
     alert("The page does not seem to contain and capturable data, must be a D&D Insider result page.")
 	  return 0;
   }
 
   var xmlHttp=dndiGetHTTPRequest();
-
   var serializer = new XMLSerializer();
-  
-	data= window.content.document.getElementById("detail").cloneNode(true);
-	data.setAttribute("id",id)
-	data=serializer.serializeToString(data);
+  data=serializer.serializeToString(data);
 
-  xmlHttp.onreadystatechange  = function()
-    { 
-         if(xmlHttp.readyState  == 4)
-         {
-              if(xmlHttp.status  == 200) 
-                  alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
-              else 
-                 alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
-         }
-    }; 
+  xmlHttp.onreadystatechange  = function() { 
+    if(xmlHttp.readyState  == 4) {
+  	  if(xmlHttp.status  == 200) 
+      	alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
+      else 
+        alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
+		}
+  }; 
 
 
   // Open a connection to the server
@@ -80,7 +98,6 @@ function dndiDoCapture(url) {
 
   // Send the request
   xmlHttp.send(data);
-  //xmlHttp.channel.cancel(true);
 }
 
 function dndiCapture(event) {
