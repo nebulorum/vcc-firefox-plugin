@@ -24,7 +24,7 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
    <toolbar id="dndicaptureToolBar" toolbarname="D&amp;D Insider Capture Toolbar" align="center" >
 	   <toolbarbutton label="D&amp;D Insider Compendium"
 	     oncommand="dndiHome(event)"
-		 image="chrome://dndicapture/skin/images/wizard.ico"/>
+		 image="chrome://dndicapture/skin/images/dndi_large.png"/>
 	   <toolbarseparator />
        <label value="Remote URL: "/>
        <textbox id="dndiVccUrl" cols="1" size="50" value="http://127.0.0.1:4143/capture" />
