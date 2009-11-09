@@ -16,6 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 
+    $Id$
 -->
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 <Description about="urn:mozilla:install-manifest">
@@ -36,5 +37,6 @@
 <em:creator>Thomas Santana</em:creator>
 <em:description>D&mp;D Insider Captures allows you to capture information from the Insider site and send them to the Virtual Combat Cards.</em:description>
 <em:homepageURL>http://www.exnebula.org/vcc</em:homepageURL>
+<em:updateURL>http://www.exnebula.org/files/dndicapture/update.rdf</em:updateURL>
 </Description>
 </RDF>
