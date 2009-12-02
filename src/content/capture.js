@@ -67,7 +67,7 @@ function dndiFindSection() {
 }
 
 
-function dndiDoCapture(url) { 
+function dndiDoCapture(url,callback) { 
   var data=dndiFindSection()
   
   if(data==null) {
@@ -79,14 +79,7 @@ function dndiDoCapture(url) {
   var serializer = new XMLSerializer();
   data=serializer.serializeToString(data);
 
-  xmlHttp.onreadystatechange  = function() { 
-    if(xmlHttp.readyState  == 4) {
-  	  if(xmlHttp.status  == 200) 
-      	alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
-      else 
-        alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
-		}
-  }; 
+  xmlHttp.onreadystatechange  = function() { callback(xmlHttp) }; 
 
 
   // Open a connection to the server
@@ -105,6 +98,90 @@ function dndiCapture(event) {
 	if(url==null || url =="") {
 		alert("You must specify the Remote URL parameter.");
 	} else { 
-		dndiDoCapture(url);
+		dndiDoCapture(url,function(xmlHttp) {
+		  if(xmlHttp.readyState  == 4) {
+  	    if(xmlHttp.status  == 200) 
+      	  alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
+        else 
+          alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
+      }
+		});
   }
 }
+
+function dndiEvalStringOnTarget(tgtWin,evalString){
+	var contentWin = null
+	var win = tgtWin.content.wrappedJSObject
+	var sb = new Components.utils.Sandbox(win)
+	sb.window = win
+	return Components.utils.evalInSandbox("with(window){" + evalString + "}", sb)
+}
+
+function dndiResultSetNextEntry(lsnr) {
+	var button = window.content.document.getElementById("GB_middle");
+	if(button && button.children[2].getAttribute("class").indexOf("disabled") != -1) { 
+		alert("Last entry reached.");
+		if(lsnr) lsnr.stop = true;
+	} else {
+		try {
+			dndiEvalStringOnTarget(window,"GB_CURRENT.switchNext();");
+		} catch(e) {
+			if(e.name == "ReferenceError") alert("You must be view multiple compendium entries to use this feature.");
+			else if(e.name == "TypeError") alert("Select on of the entries to start the mass capture.");
+			else alert("Unexpected error looking for GreyBar: " + e);
+			if(lsnr) lsnr.stop = true;
+		}
+	}
+}
+
+function dndiStepAndAdvance(move) {
+	var dndiListener = {
+			QueryInterface: function (iid) {
+					if (iid.equals(nsIWebProgressListener) || iid.equals(nsISupportsWeakReference))
+							return this;
+					throw Components.results.NS_NOINTERFACE;
+			},
+			onStateChange: function (webProgress, request, stateFlags, status) {
+					if (stateFlags  == 0x80010 )  { 
+							if(this.stop || this.nextMove == null) this.unregister();
+							else this.nextMove(this);
+					}
+			} ,
+			stop: false ,
+			unregister: function() {
+				var myBrowser = window.document.getElementById("content");
+				var wp = myBrowser.webNavigation.QueryInterface(nsIWebProgress);
+				wp.removeProgressListener(this);
+				alert("Unregistered self");
+
+		}
+	};
+
+	dndiListener.nextMove = move
+	var myBrowser = window.document.getElementById("content");
+	var wp = myBrowser.webNavigation.QueryInterface(nsIWebProgress);
+	wp.addProgressListener(dndiListener, nsIWebProgress.NOTIFY_STATE_WINDOW); 
+	// Fire the first step
+	dndiListener.nextMove(dndiListener)
+}
+
+function dndiCaptureAndAdvance(lsnr) {
+	var url = document.getElementById("dndiVccUrl").value;
+	if(url==null || url =="") {
+		alert("You must specify the Remote URL parameter.");
+		lsnr.stop = true;
+	} else { 
+		dndiDoCapture(url,function(xmlHttp) {
+			if(xmlHttp.readyState  == 4) {
+				/*if(xmlHttp.status  == 200) 
+					alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
+				else 
+					alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
+				*/
+				dndiResultSetNextEntry(lsnr);
+			}
+		});
+	}
+}
+
+//dndiStepAndAdvance(dndiCaptureAndAdvance)
