@@ -117,11 +117,19 @@ function dndiEvalStringOnTarget(tgtWin,evalString){
 	return Components.utils.evalInSandbox("with(window){" + evalString + "}", sb)
 }
 
-function dndiResultSetNextEntry(lsnr) {
+function dndiCanAdvance(){
 	var button = window.content.document.getElementById("GB_middle");
-	if(button && button.children[2].getAttribute("class").indexOf("disabled") != -1) { 
+	if(button && button.children[2].getAttribute("class").indexOf("disabled") == -1) return true;
+	else return false;
+}
+
+function dndiResultSetNextEntry(lsnr) {
+	if(!dndiCanAdvance) { 
 		alert("Last entry reached.");
-		if(lsnr) lsnr.stop = true;
+		if(lsnr) { 
+			lsnr.stop = true;
+			lsnr.unregister();
+		}
 	} else {
 		try {
 			dndiEvalStringOnTarget(window,"GB_CURRENT.switchNext();");
@@ -134,35 +142,46 @@ function dndiResultSetNextEntry(lsnr) {
 	}
 }
 
+var dndiListener = {
+	QueryInterface: function (iid) {
+			if (iid.equals(Components.interfaces.nsIWebProgressListener) || iid.equals(Components.interfaces.nsISupportsWeakReference))
+					return this;
+			throw Components.results.NS_NOINTERFACE;
+	},
+	onStateChange: function (webProgress, request, stateFlags, status) {
+			if (stateFlags  == 0x80010 )  { 
+				this.unregister();
+				if(!this.stop || this.nextMove != null) {
+					this.register();
+					this.nextMove(this);
+				}
+			}
+			
+	} ,
+	stop: false ,
+	unregister: function() {
+		//alert("Unregistered self");
+		var myBrowser = window.document.getElementById("content");
+		var wp = myBrowser.webNavigation.QueryInterface(Components.interfaces.nsIWebProgress);
+		wp.removeProgressListener(this);
+	},
+	register: function() {
+		//alert("Registered self");
+		var myBrowser = window.document.getElementById("content");
+		var wp = myBrowser.webNavigation.QueryInterface(Components.interfaces.nsIWebProgress);
+		wp.addProgressListener(dndiListener, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW); 
+	}
+};
+
 function dndiStepAndAdvance(move) {
-	var dndiListener = {
-			QueryInterface: function (iid) {
-					if (iid.equals(nsIWebProgressListener) || iid.equals(nsISupportsWeakReference))
-							return this;
-					throw Components.results.NS_NOINTERFACE;
-			},
-			onStateChange: function (webProgress, request, stateFlags, status) {
-					if (stateFlags  == 0x80010 )  { 
-							if(this.stop || this.nextMove == null) this.unregister();
-							else this.nextMove(this);
-					}
-			} ,
-			stop: false ,
-			unregister: function() {
-				var myBrowser = window.document.getElementById("content");
-				var wp = myBrowser.webNavigation.QueryInterface(nsIWebProgress);
-				wp.removeProgressListener(this);
-				alert("Unregistered self");
 
-		}
-	};
-
-	dndiListener.nextMove = move
-	var myBrowser = window.document.getElementById("content");
-	var wp = myBrowser.webNavigation.QueryInterface(nsIWebProgress);
-	wp.addProgressListener(dndiListener, nsIWebProgress.NOTIFY_STATE_WINDOW); 
-	// Fire the first step
-	dndiListener.nextMove(dndiListener)
+	//const nsIWebNavigation          = Components.interfaces.nsIWebNavigation;
+	//const nsIWebProgress            = Components.interfaces.nsIWebProgress;
+	//const nsIWebProgressListener    = Components.interfaces.nsIWebProgressListener;
+	//const nsISupportsWeakReference  = Components.interfaces.nsISupportsWeakReference; 
+	dndiListener.nextMove = move;
+	dndiListener.register();
+	dndiListener.nextMove(dndiListener);
 }
 
 function dndiCaptureAndAdvance(lsnr) {
@@ -173,12 +192,13 @@ function dndiCaptureAndAdvance(lsnr) {
 	} else { 
 		dndiDoCapture(url,function(xmlHttp) {
 			if(xmlHttp.readyState  == 4) {
-				/*if(xmlHttp.status  == 200) 
-					alert("Virtual Combat Cards replied: "+xmlHttp.responseText) 
-				else 
+				if(xmlHttp.status != 200) {
 					alert("Sending to "+url+" failed with error code: " + xmlHttp.status);
-				*/
-				dndiResultSetNextEntry(lsnr);
+					lnsr.stop = true
+					lnsr.unregister();
+				} else {
+					dndiResultSetNextEntry(lsnr);
+				}
 			}
 		});
 	}
