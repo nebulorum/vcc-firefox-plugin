@@ -1,0 +1,20 @@
+<component xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.0 http://maven.apache.org/xsd/component-1.1.0.xsd">
+    <fileSets>
+        <fileSet>
+            <directory>target/classes</directory>
+            <lineEnding>keep</lineEnding>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>src/main/rdf/chrome.manifest</source>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>0644</fileMode>
+        </file>
+    </files>
+</component>
