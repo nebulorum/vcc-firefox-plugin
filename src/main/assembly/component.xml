@@ -5,14 +5,22 @@
         <fileSet>
             <directory>target/classes</directory>
             <lineEnding>keep</lineEnding>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory>chrome</outputDirectory>
             <fileMode>0644</fileMode>
             <directoryMode>0755</directoryMode>
+            <excludes>
+                <exclude>install.rdf</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     <files>
         <file>
             <source>src/main/rdf/chrome.manifest</source>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>0644</fileMode>
+        </file>
+        <file>
+            <source>target/classes/install.rdf</source>
             <outputDirectory>.</outputDirectory>
             <fileMode>0644</fileMode>
         </file>

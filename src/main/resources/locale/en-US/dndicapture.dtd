@@ -1,1 +1,6 @@
-<!ENTITY dndiCaptureToolbar.title "D&D Insider Capture Toolbar">
+<!ENTITY dndiCaptureToolbar.title "D&amp;D Insider Capture Toolbar">
+<!ENTITY dndiCaptureSidebar.title "D&amp;D Insider Capture">
+<!ENTITY dndiCaptureSidebar.capture "Capture">
+<!ENTITY dndiCaptureSidebar.compendium "D&amp;D Insider Compendium">
+<!ENTITY openDndiCaptureSidebar.commandkey "D">
+<!ENTITY openDndiCaptureSidebar.modifierskey "accel shift">

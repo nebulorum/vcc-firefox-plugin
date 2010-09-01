@@ -17,7 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 -->
-<overlay id="Scrapper-Overlay"
+<!DOCTYPE overlay SYSTEM "chrome://dndicapture/locale/dndicapture.dtd">
+<overlay id="dndiCaptureOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script type="application/x-javascript" src="chrome://dndicapture/content/capture.js"/>
     <toolbox id="navigator-toolbox">
@@ -33,4 +34,26 @@
                            label="Capture" oncommand="dndiCapture(event)"/>
         </toolbar>
     </toolbox>
+    <menupopup id="viewSidebarMenu">
+        <menuitem key="key_openDNDICaptureSidebar" observes="viewDNDICaptureSidebar"
+                  label="&dndiCaptureSidebar.title;"/>
+    </menupopup>
+
+    <keyset id="mainKeyset">
+        <key id="key_openDNDICaptureSidebar" command="viewDNDICaptureSidebar"
+             key="&openDndiCaptureSidebar.commandkey;"
+             modifiers="&openDndiCaptureSidebar.modifierskey;"/>
+    </keyset>
+
+    <broadcasterset id="mainBroadcasterSet">
+        <broadcaster id="viewDNDICaptureSidebar"
+                     label="&dndiCaptureSidebar.title;"
+                     autoCheck="false"
+                     type="checkbox"
+                     group="sidebar"
+                     sidebarurl="chrome://dndicapture/content/sidebar.xul"
+                     sidebartitle="&dndiCaptureSidebar.title;"
+                     oncommand="toggleSidebar('viewDNDICaptureSidebar');"/>
+    </broadcasterset>
+
 </overlay>

@@ -1,3 +1,4 @@
-content dndicapture content/
-skin dndicapture classic/1.0 skin/
+content dndicapture chrome/content/
+locale  dndicapture en chrome/locale/en-US/
+skin    dndicapture classic/1.0 chrome/skin/
 overlay chrome://browser/content/browser.xul chrome://dndicapture/content/dndicapture.xul
