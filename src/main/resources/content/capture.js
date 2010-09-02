@@ -39,6 +39,22 @@ var dndiCapture = {
         window._content.document.location = url;
     },
 
+    getMainWindow: function () {
+        return window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                .getInterface(Components.interfaces.nsIWebNavigation)
+                .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+                .rootTreeItem
+                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+                .getInterface(Components.interfaces.nsIDOMWindow);
+    },
+
+    gotoHelp: function(event) {
+        var mainWindow = this.getMainWindow();
+        with (mainWindow) {
+            gBrowser.addTab('http://www.exnebula.org/vcc/plugin');
+        }
+    },
+
     getEntryID: function (url) {
         var re = new RegExp("id=([0-9]+)");
         var match = re.exec(url);
@@ -79,11 +95,11 @@ var dndiCapture = {
 
     // Callback is only used if we have success, otherwise we stop everything
     sendCapture: function(callback) {
-        var url = this.getVCCURL() + "/capture?reply=plugin-text"
+        var url = this.getVCCURL() + "/capture?reply=plugin-text";
         var data = this.findSection();
 
         if (data == null) {
-            alert("The page does not seem to contain and capturable data, must be a D&D Insider result page.");
+            this.warnUser("Wrong page", "The page does not seem to contain and capturable data, must be a D&D Insider result page.");
             return 0;
         }
         var xmlHttp = this.getHTTPRequest();
@@ -94,7 +110,10 @@ var dndiCapture = {
             if (xmlHttp.readyState == 4) {
                 if (xmlHttp.status == 200) {
                     var fields = xmlHttp.responseText.split(":");
-                    dndiCapture.addResult(fields[1], fields[0]);
+                    if (fields.length == 2)
+                        dndiCapture.addResult(fields[1], fields[0]);
+                    else
+                        dndiCapture.addResult(fields[0], "-");
                     if (callback != null) callback(xmlHttp);
                 } else {
                     dndiCapture.addResult("Failed to contact VCC", "Failed");
@@ -115,7 +134,7 @@ var dndiCapture = {
 
 
     withGetReply: function(path, okCallback, errorCallback) {
-        var url = this.getVCCURL()
+        var url = this.getVCCURL();
         var xmlHttp = this.getHTTPRequest();
 
         xmlHttp.onreadystatechange = function() {
@@ -126,7 +145,7 @@ var dndiCapture = {
                     if (errorCallback != null) errorCallback(xmlHttp.status, xmlHttp.responseText)
                 }
             }
-        }
+        };
         xmlHttp.open("GET", url + path, true);
         xmlHttp.send(null);
     },
@@ -155,6 +174,23 @@ var dndiCapture = {
             return branch.getCharPref("vcc.url");
         }
     },
+
+    getExperimentalAware: function() {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+        var branch = prefService.getBranch("dndicapture.");
+        if (branch.prefHasUserValue("auto.experimental"))
+            return branch.getBoolPref("auto.experimental");
+        else {
+            branch.setBoolPref("auto.experimental", false);
+            return branch.getBoolPref("auto.experimental");
+        }
+    },
+
+    setExperimentalAware: function(newValue) {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+        prefService.getBranch("dndicapture.").setBoolPref("auto.experimental", newValue);
+    },
+
     doCapture: function (event) {
         this.sendCapture(null);
     },
@@ -189,7 +225,6 @@ var dndiCapture = {
             }
         },
         register: function() {
-            //alert("Registered self");
             var wp = this.contentWindow.webNavigation.QueryInterface(Components.interfaces.nsIWebProgress);
             wp.addProgressListener(this, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
         },
@@ -208,7 +243,6 @@ var dndiCapture = {
         stopAutomation: function() {
             this.running = false;
             this.unregister();
-            alert("Stop pressed:" + this.running);
         },
         advanceToNextEntry: function() {
             var button = this.contentWindow.contentDocument.getElementById("GB_middle");
@@ -225,6 +259,11 @@ var dndiCapture = {
         }
     },
 
+    warnUser: function(title, text) {
+        var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+        promptService.alert(this.getMainWindow, title, text);
+    },
+
     executeJSOnTarget: function(tgtWin, evalString) {
         var win = tgtWin.content.wrappedJSObject;
         var sb = new Components.utils.Sandbox(win);
@@ -233,15 +272,22 @@ var dndiCapture = {
     },
 
     confirmAutomation: function() {
+        var aware = this.getExperimentalAware();
+        if (aware) return true; // Skip if user said he knows
+
+        var warned = {value: aware};
         var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-        var rv = ps.confirmEx(window, "Experimental Feature",
+        var rv = ps.confirmCheck(this.getMainWindow, "Experimental Feature",
                 "This is a experimental feature which will add automation to your browser. " +
-                        "You should use this only if you are not doing anything important. " +
+                        "You should use this only if you are not doing anything important.\n" +
                         "You may have to close the browser if things don't work correctly.\n\nDo you want to activate?",
-                ps.BUTTON_TITLE_IS_STRING * ps.BUTTON_POS_0 +
-                        ps.BUTTON_TITLE_IS_STRING * ps.BUTTON_POS_1,
-                "Yes", "No", null, null, {});
-        return rv == 0;
+                "I've been warned, don't ask again",
+                warned);
+
+        if (rv) {
+            this.setExperimentalAware(warned.value);
+        }
+        return rv;
     },
 
     startAutoCapture: function(event, autoNext) {
@@ -251,11 +297,11 @@ var dndiCapture = {
                 if (response == "true") {
                     dndiCapture.AutoCapture.startAutomation(autoNext);
                 } else {
-                    alert("Current Virtual Combat Cards does not support this automation, use version 1.4.0 or higher");
+                    dndiCapture.warnUser("Wrong Virtual Combat Cards Version", "The version of Virtual Combat Cards you are running does not support this automation. Please upgrade to version 1.4.0 or higher");
                 }
             },
                     function(code, response) {
-                        alert("Failed to contact Virtual Combat Cards, please start it.");
+                        dndiCapture.warnUser("Virtual Combat Cards Server not found", "Failed to contact Virtual Combat Cards, please start it.");
                     })
         }
     },

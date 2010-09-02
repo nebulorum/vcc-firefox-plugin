@@ -13,13 +13,13 @@
                            image="chrome://dndicapture/skin/images/dndi_large.png"/>
         </toolbar>
         <toolbar id="dndiCaptureBar2">
-            <!-- toolbarbuttons go here -->
             <toolbarbutton id="captureButton" label="&dndiCaptureSidebar.capture;"
                            oncommand="dndiCapture.doCapture(event);"
                            image="chrome://dndicapture/skin/images/page_white_go.png" tooltiptext="Capture entry"/>
-            <!--
-            <toolbarbutton id="clearButton" label="Clear" command="commandid" tooltiptext="{tooltip}"/>
-            -->
+            <toolbarbutton id="dndiHelp" label="&dndiCaptureSidebar.helpLabel;"
+                           oncommand="dndiCapture.gotoHelp(event);"
+                           image="chrome://dndicapture/skin/images/help.png"
+                           tooltiptext="&dndiCaptureSidebar.helpTooltip;"/>
         </toolbar>
     </vbox>
     <listbox flex="1" id="dndiCaptureResult">
@@ -37,7 +37,6 @@
             <command id="dndiToggleAuto" oncommand="alert('Help');"/>
         </commandset>
         <toolbar id="dndiCaptureBarAuto">
-            <label id="dndiAutoLabel" value="&dndiCaptureSidebar.auto.barLabel; :"/>
             <toolbarbutton id="dndiAutoOn" label="&dndiCaptureSidebar.auto.startLabel;"
                            oncommand="dndiCapture.startAutoCapture(event, false);"
                            image="chrome://dndicapture/skin/images/cog_go.png"

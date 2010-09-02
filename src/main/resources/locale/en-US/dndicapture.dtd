@@ -12,6 +12,8 @@
 <!ENTITY dndiCaptureSidebar.auto.startNextTooltip "Activate automatic capture and with auto advance to next entry of the record set.">
 <!ENTITY dndiCaptureSidebar.auto.stopLabel "Stop">
 <!ENTITY dndiCaptureSidebar.auto.stopTooltip "Stop automatic capture">
+<!ENTITY dndiCaptureSidebar.helpLabel "Help">
+<!ENTITY dndiCaptureSidebar.helpTooltip "Send me to the plugin help page.">
 <!ENTITY dndiCaptureSidebar.captureTooltip "Show D&amp;D Insider Capture sidebar">
-<!ENTITY openDndiCaptureSidebar.commandkey "D">
+<!ENTITY openDndiCaptureSidebar.commandkey "V">
 <!ENTITY openDndiCaptureSidebar.modifierskey "accel shift">
