@@ -9,22 +9,20 @@
         <toolbar id="dndiCaptureBar1">
             <!-- toolbarbuttons go here -->
             <toolbarbutton label="&dndiCaptureSidebar.compendium;"
-                           oncommand="dndiHome(event);"
+                           oncommand="dndiCapture.gotoCompendium(event);"
                            image="chrome://dndicapture/skin/images/dndi_large.png"/>
         </toolbar>
         <toolbar id="dndiCaptureBar2">
-            <label value="Remote URL: "/>
-            <textbox id="dndiVccUrl" cols="1" size="50" value="http://127.0.0.1:4143/capture"/>
-        </toolbar>
-        <toolbar id="dndiCaptureBar3">
             <!-- toolbarbuttons go here -->
             <toolbarbutton id="captureButton" label="&dndiCaptureSidebar.capture;"
-                           oncommand="dndiCapture(event);"
+                           oncommand="dndiCapture.doCapture(event);"
                            image="chrome://dndicapture/skin/images/page_white_go.png" tooltiptext="Capture entry"/>
+            <!--
             <toolbarbutton id="clearButton" label="Clear" command="commandid" tooltiptext="{tooltip}"/>
+            -->
         </toolbar>
     </vbox>
-    <listbox flex="1">
+    <listbox flex="1" id="dndiCaptureResult">
         <listhead>
             <listheader label="Entry" width="200"/>
             <listheader label="Status" width="50"/>
@@ -33,6 +31,25 @@
             <listcol/>
             <listcol/>
         </listcols>
-        <listitem value="{item value}" label="item label"/>
     </listbox>
+    <vbox>
+        <commandset>
+            <command id="dndiToggleAuto" oncommand="alert('Help');"/>
+        </commandset>
+        <toolbar id="dndiCaptureBarAuto">
+            <label id="dndiAutoLabel" value="&dndiCaptureSidebar.auto.barLabel; :"/>
+            <toolbarbutton id="dndiAutoOn" label="&dndiCaptureSidebar.auto.startLabel;"
+                           oncommand="dndiCapture.startAutoCapture(event, false);"
+                           image="chrome://dndicapture/skin/images/cog_go.png"
+                           tooltiptext="&dndiCaptureSidebar.auto.startTooltip;"/>
+            <toolbarbutton id="dndiAutoNextOn" label="&dndiCaptureSidebar.auto.startNextLabel;"
+                           oncommand="dndiCapture.startAutoCapture(event, true);"
+                           image="chrome://dndicapture/skin/images/cog_go.png"
+                           tooltiptext="&dndiCaptureSidebar.auto.startNextTooltip;"/>
+            <toolbarbutton id="dndiAutoStop" label="&dndiCaptureSidebar.auto.stopLabel;"
+                           oncommand="dndiCapture.stopAutoCapture(event);"
+                           image="chrome://dndicapture/skin/images/cog_delete.png"
+                           tooltiptext="&dndiCaptureSidebar.auto.stopTooltip;"/>
+        </toolbar>
+    </vbox>
 </page>

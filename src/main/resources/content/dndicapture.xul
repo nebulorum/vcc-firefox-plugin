@@ -17,23 +17,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css" ?>
+<?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css" ?>
+<?xml-stylesheet href="chrome://dndicapture/skin/dndicapture.css" type="text/css" ?>
 <!DOCTYPE overlay SYSTEM "chrome://dndicapture/locale/dndicapture.dtd">
 <overlay id="dndiCaptureOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script type="application/x-javascript" src="chrome://dndicapture/content/capture.js"/>
-    <toolbox id="navigator-toolbox">
-        <toolbar id="dndicaptureToolBar" toolbarname="&dndiCaptureToolbar.title;" align="center">
-            <toolbarbutton label="D&amp;D Insider Compendium"
-                           oncommand="dndiHome(event)"
-                           image="chrome://dndicapture/skin/images/dndi_large.png"/>
-            <toolbarseparator/>
-            <label value="Remote URL: "/>
-            <textbox id="dndiVccUrl" cols="1" size="50" value="http://127.0.0.1:4143/capture"/>
-            <toolbarbutton id="dndiCapture"
-                           image="chrome://dndicapture/skin/images/page_white_go.png"
-                           label="Capture" oncommand="dndiCapture(event)"/>
-        </toolbar>
-    </toolbox>
+    <toolbar id="PersonalToolbar">
+        <toolbarbutton id="Compendium-Button"
+                       label="&dndiCaptureSidebar.compendiumShort;"
+                       tooltiptext="&dndiCaptureSidebar.compendiumTooltip;"
+                       oncommand="dndiCapture.gotoCompendium(event);"
+                       image="chrome://dndicapture/skin/images/dndi_large.png"/>
+        <toolbarbutton id="Capture-Toolbar-Button"
+                       tooltiptext="&dndiCaptureSidebar.captureTooltip;"
+                       class="chromeclass-toolbar-additional"
+                       label="&dndiCaptureSidebar.captureTitle;"
+                       oncommand="toggleSidebar('viewDNDICaptureSidebar');"/>
+    </toolbar>
+
     <menupopup id="viewSidebarMenu">
         <menuitem key="key_openDNDICaptureSidebar" observes="viewDNDICaptureSidebar"
                   label="&dndiCaptureSidebar.title;"/>

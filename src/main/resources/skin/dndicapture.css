@@ -1,0 +1,22 @@
+#Capture-Toolbar-Button {
+    list-style-image: url("chrome://dndicapture/skin/images/d20metal-24.png");
+}
+
+toolbar[iconsize="small"] #Capture-Toolbar-Button {
+    list-style-image: url("chrome://dndicapture/skin/images/d20metal-16.png");
+}
+
+#Capture-Toolbar-Button > .toolbarbutton-text {
+    display: -moz-box !important;
+    padding-top: 4px !important;
+}
+
+#Compendium-Button > .toolbarbutton-text {
+    display: -moz-box !important;
+    padding-top: 4px !important;
+}
+
+#dndiAutoLabel > .topbarbutton-text {
+    margin-top: 4px;
+    padding-top: 4px !important;
+}

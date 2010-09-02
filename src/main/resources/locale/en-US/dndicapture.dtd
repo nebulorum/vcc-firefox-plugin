@@ -2,5 +2,16 @@
 <!ENTITY dndiCaptureSidebar.title "D&amp;D Insider Capture">
 <!ENTITY dndiCaptureSidebar.capture "Capture">
 <!ENTITY dndiCaptureSidebar.compendium "D&amp;D Insider Compendium">
+<!ENTITY dndiCaptureSidebar.compendiumShort "D&amp;DI Compendium">
+<!ENTITY dndiCaptureSidebar.compendiumTooltip "Go to D&amp;D Insider Compendium website">
+<!ENTITY dndiCaptureSidebar.captureTitle "D&amp;DI Capture">
+<!ENTITY dndiCaptureSidebar.auto.barLabel "Auto Capture">
+<!ENTITY dndiCaptureSidebar.auto.startLabel "Start Auto">
+<!ENTITY dndiCaptureSidebar.auto.startTooltip "Activate automatic capture, will capture as soon as page loads.">
+<!ENTITY dndiCaptureSidebar.auto.startNextLabel "Start Auto &amp; Next">
+<!ENTITY dndiCaptureSidebar.auto.startNextTooltip "Activate automatic capture and with auto advance to next entry of the record set.">
+<!ENTITY dndiCaptureSidebar.auto.stopLabel "Stop">
+<!ENTITY dndiCaptureSidebar.auto.stopTooltip "Stop automatic capture">
+<!ENTITY dndiCaptureSidebar.captureTooltip "Show D&amp;D Insider Capture sidebar">
 <!ENTITY openDndiCaptureSidebar.commandkey "D">
 <!ENTITY openDndiCaptureSidebar.modifierskey "accel shift">
