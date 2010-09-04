@@ -167,23 +167,25 @@ var dndiCapture = {
     getVCCURL: function() {
         var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
         var branch = prefService.getBranch("dndicapture.");
-        if (branch.prefHasUserValue("vcc.url"))
-            return branch.getCharPref("vcc.url");
-        else {
+        if (!branch.prefHasUserValue("vcc.url"))
             branch.setCharPref("vcc.url", "http://127.0.0.1:4143");
-            return branch.getCharPref("vcc.url");
-        }
+        return branch.getCharPref("vcc.url");
     },
 
     getExperimentalAware: function() {
         var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
         var branch = prefService.getBranch("dndicapture.");
-        if (branch.prefHasUserValue("auto.experimental"))
-            return branch.getBoolPref("auto.experimental");
-        else {
+        if (!branch.prefHasUserValue("auto.experimental"))
             branch.setBoolPref("auto.experimental", false);
-            return branch.getBoolPref("auto.experimental");
-        }
+        return branch.getBoolPref("auto.experimental");
+    },
+
+    getEnableFullAuto: function() {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
+        var branch = prefService.getBranch("dndicapture.");
+        if (!branch.prefHasUserValue("auto.full"))
+            branch.setBoolPref("auto.full", false);
+        return branch.getBoolPref("auto.full");
     },
 
     setExperimentalAware: function(newValue) {
@@ -213,7 +215,6 @@ var dndiCapture = {
                     });
                 }
             }
-
         },
         running: false,
         autoAdvance: false,
@@ -307,5 +308,13 @@ var dndiCapture = {
     },
     stopAutoCapture: function(event) {
         this.AutoCapture.stopAutomation();
+    },
+
+    disableAutoNext: function() {
+        var button = document.getElementById("dndiAutoNextOn");
+        if (button) button.setAttribute("hidden", true);
+    },
+    init: function() {
+        if (!this.getEnableFullAuto()) this.disableAutoNext();
     }
 }

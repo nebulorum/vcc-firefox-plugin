@@ -3,11 +3,11 @@
 <?xml-stylesheet href="chrome://browser/skin/browser.css" type="text/css" ?>
 <!DOCTYPE page SYSTEM "chrome://dndicapture/locale/dndicapture.dtd">
 <page id="dndiCaptureSidebar" title="&dndiCaptureSidebar.title;"
-      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload="dndiCapture.init();">
     <script type="application/x-javascript" src="chrome://dndicapture/content/capture.js"/>
     <vbox flex="0">
         <toolbar id="dndiCaptureBar1">
-            <!-- toolbarbuttons go here -->
             <toolbarbutton label="&dndiCaptureSidebar.compendium;"
                            oncommand="dndiCapture.gotoCompendium(event);"
                            image="chrome://dndicapture/skin/images/dndi_large.png"/>

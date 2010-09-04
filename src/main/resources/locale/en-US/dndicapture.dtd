@@ -6,11 +6,11 @@
 <!ENTITY dndiCaptureSidebar.compendiumTooltip "Go to D&amp;D Insider Compendium website">
 <!ENTITY dndiCaptureSidebar.captureTitle "D&amp;DI Capture">
 <!ENTITY dndiCaptureSidebar.auto.barLabel "Auto Capture">
-<!ENTITY dndiCaptureSidebar.auto.startLabel "Start Auto">
+<!ENTITY dndiCaptureSidebar.auto.startLabel "Start Auto Capture">
 <!ENTITY dndiCaptureSidebar.auto.startTooltip "Activate automatic capture, will capture as soon as page loads.">
 <!ENTITY dndiCaptureSidebar.auto.startNextLabel "Start Auto &amp; Next">
 <!ENTITY dndiCaptureSidebar.auto.startNextTooltip "Activate automatic capture and with auto advance to next entry of the record set.">
-<!ENTITY dndiCaptureSidebar.auto.stopLabel "Stop">
+<!ENTITY dndiCaptureSidebar.auto.stopLabel "Stop Auto Capture">
 <!ENTITY dndiCaptureSidebar.auto.stopTooltip "Stop automatic capture">
 <!ENTITY dndiCaptureSidebar.helpLabel "Help">
 <!ENTITY dndiCaptureSidebar.helpTooltip "Send me to the plugin help page.">
