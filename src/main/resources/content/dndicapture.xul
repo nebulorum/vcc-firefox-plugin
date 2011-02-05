@@ -25,11 +25,6 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script type="application/x-javascript" src="chrome://dndicapture/content/capture.js"/>
     <toolbar id="PersonalToolbar">
-        <toolbarbutton id="Compendium-Button"
-                       label="&dndiCaptureSidebar.compendiumShort;"
-                       tooltiptext="&dndiCaptureSidebar.compendiumTooltip;"
-                       oncommand="dndiCapture.gotoCompendium(event);"
-                       image="chrome://dndicapture/skin/images/dndi_large.png"/>
         <toolbarbutton id="Capture-Toolbar-Button"
                        tooltiptext="&dndiCaptureSidebar.captureTooltip;"
                        class="chromeclass-toolbar-additional"

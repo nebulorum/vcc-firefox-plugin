@@ -16,105 +16,113 @@
  */
 //$Id: capture.js 474 2009-12-13 15:12:41Z mailleux@gmail.com $
 
+//JSLint predefined: ActiveXObject, window, Components, XPathResult, XMLSerializer
 var dndiCapture = {
-    getHTTPRequest: function() {
+    getHTTPRequest: function () {
         try {
             return new XMLHttpRequest();
-        } catch(e) {
+        } catch (e) {
         }
         try {
             return new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
+        } catch (e2) {
         }
         try {
             return new ActiveXObject("Microsoft.XMLHTTP");
-        } catch (e) {
+        } catch (e3) {
         }
         alert("XMLHttpRequest not supported");
         return null;
     },
 
-    gotoCompendium: function(event) {
+    gotoCompendium: function (event) {
         var url = "http://www.wizards.com/dndinsider/compendium/database.aspx";
         window._content.document.location = url;
     },
 
     getMainWindow: function () {
         return window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                .getInterface(Components.interfaces.nsIWebNavigation)
-                .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
-                .rootTreeItem
-                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                .getInterface(Components.interfaces.nsIDOMWindow);
+            .getInterface(Components.interfaces.nsIWebNavigation)
+            .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
+            .rootTreeItem
+            .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+            .getInterface(Components.interfaces.nsIDOMWindow);
     },
 
-    gotoHelp: function(event) {
+    gotoHelp: function (event) {
         var mainWindow = this.getMainWindow();
-        with (mainWindow) {
-            gBrowser.addTab('http://www.exnebula.org/vcc/plugin');
-        }
+        mainWindow.gBrowser.addTab('http://www.exnebula.org/vcc/plugin');
     },
 
     getEntryID: function (url) {
-        var re = new RegExp("id=([0-9]+)");
-        var match = re.exec(url);
-        if (match && match.length == 2)
-            return  match[1];
-        else
+        var re = new RegExp("id=([0-9]+)"),
+            match = re.exec(url);
+        if (match && match.length === 2) {
+            return (match[1]);
+        } else {
             return null;
+        }
     },
 
     /*
      * This function will try to find the DIV with ID="detail", if it fails it
      * will look for Iframes with that div.
      */
-    findSection: function() {
-        var doc = window.content.document;
+    findSection: function () {
+        var doc = window.content.document,
+		    id, 
+			data, 
+			ndata, 
+			res;
 
-        while (doc != null) {
-            var data = doc.getElementById("detail");
-            var id = this.getEntryID(doc.location);
+        while (doc !== null) {
+            data = doc.getElementById("detail");
+            id = this.getEntryID(doc.location);
 
-            if (id != null && data != null) {
-                var ndata = data.cloneNode(true);
+            if (id !== null && data !== null) {
+                ndata = data.cloneNode(true);
                 ndata.setAttribute("id", id);
                 return ndata;
             }
 
             // Go down IFrame
-            var res = doc.evaluate("//iframe", doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            res = doc.evaluate("//iframe", doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
 
-            if (res != null && res.singleNodeValue != null)
+            if (res && res.singleNodeValue) {
                 doc = res.singleNodeValue.contentWindow.document;
-            else
+            } else {
                 doc = null;
+			}
         }
         return null;
     },
 
-
     // Callback is only used if we have success, otherwise we stop everything
-    sendCapture: function(callback) {
-        var url = this.getVCCURL() + "/capture?reply=plugin-text";
-        var data = this.findSection();
+    sendCapture: function (callback) {
+        var url = this.getVCCURL() + "/capture?reply=plugin-text",
+            data = this.findSection(),
+			xmlHttp = this.getHTTPRequest(),
+			serializer = new XMLSerializer();
 
-        if (data == null) {
+        if (!data) {
             this.warnUser("Wrong page", "The page does not seem to contain and capturable data, must be a D&D Insider result page.");
             return 0;
         }
-        var xmlHttp = this.getHTTPRequest();
-        var serializer = new XMLSerializer();
         data = serializer.serializeToString(data);
 
-        xmlHttp.onreadystatechange = function() {
-            if (xmlHttp.readyState == 4) {
-                if (xmlHttp.status == 200) {
-                    var fields = xmlHttp.responseText.split(":");
-                    if (fields.length == 2)
+        xmlHttp.onreadystatechange = function () {
+		    var fields;
+            if (xmlHttp.readyState === 4) {
+                if (xmlHttp.status === 200) {
+                    fields = xmlHttp.responseText.split(":");
+                    if (fields.length === 2) {
                         dndiCapture.addResult(fields[1], fields[0]);
-                    else
+                    } else {
                         dndiCapture.addResult(fields[0], "-");
-                    if (callback != null) callback(xmlHttp);
+					}
+                    if (callback) {
+					    callback(xmlHttp);
+					}
                 } else {
                     dndiCapture.addResult("Failed to contact VCC", "Failed");
                     dndiCapture.AutoCapture.stopAutomation();
@@ -133,16 +141,20 @@ var dndiCapture = {
     },
 
 
-    withGetReply: function(path, okCallback, errorCallback) {
-        var url = this.getVCCURL();
-        var xmlHttp = this.getHTTPRequest();
+    withGetReply: function (path, okCallback, errorCallback) {
+        var url = this.getVCCURL(),
+            xmlHttp = this.getHTTPRequest();
 
-        xmlHttp.onreadystatechange = function() {
-            if (xmlHttp.readyState == 4) {
-                if (xmlHttp.status == 200) {
-                    if (okCallback != null) okCallback(xmlHttp.responseText)
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState === 4) {
+                if (xmlHttp.status === 200) {
+                    if (okCallback) {
+					    okCallback(xmlHttp.responseText);
+					}
                 } else {
-                    if (errorCallback != null) errorCallback(xmlHttp.status, xmlHttp.responseText)
+                    if (errorCallback) { 
+					    errorCallback(xmlHttp.status, xmlHttp.responseText);
+					}
                 }
             }
         };
@@ -151,10 +163,10 @@ var dndiCapture = {
     },
 
 
-    addResult: function(name, status) {
-        var theList = document.getElementById('dndiCaptureResult');
-        var row = document.createElement('listitem');
-        var cell = document.createElement('listcell');
+    addResult: function (name, status) {
+        var theList = document.getElementById('dndiCaptureResult'),
+            row = document.createElement('listitem'),
+            cell = document.createElement('listcell');
         cell.setAttribute('label', name);
         row.appendChild(cell);
 
@@ -164,31 +176,34 @@ var dndiCapture = {
 
         theList.appendChild(row);
     },
-    getVCCURL: function() {
-        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-        var branch = prefService.getBranch("dndicapture.");
-        if (!branch.prefHasUserValue("vcc.url"))
+    getVCCURL: function () {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService),
+            branch = prefService.getBranch("dndicapture.");
+        if (!branch.prefHasUserValue("vcc.url")) {
             branch.setCharPref("vcc.url", "http://127.0.0.1:4143");
+		}
         return branch.getCharPref("vcc.url");
     },
 
-    getExperimentalAware: function() {
-        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-        var branch = prefService.getBranch("dndicapture.");
-        if (!branch.prefHasUserValue("auto.experimental"))
+    getExperimentalAware: function () {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService),
+            branch = prefService.getBranch("dndicapture.");
+        if (!branch.prefHasUserValue("auto.experimental")) {
             branch.setBoolPref("auto.experimental", false);
+		}
         return branch.getBoolPref("auto.experimental");
     },
 
-    getEnableFullAuto: function() {
-        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
-        var branch = prefService.getBranch("dndicapture.");
-        if (!branch.prefHasUserValue("auto.full"))
+    getEnableFullAuto: function () {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService),
+            branch = prefService.getBranch("dndicapture.");
+        if (!branch.prefHasUserValue("auto.full")) {
             branch.setBoolPref("auto.full", false);
+		}
         return branch.getBoolPref("auto.full");
     },
 
-    setExperimentalAware: function(newValue) {
+    setExperimentalAware: function (newValue) {
         var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
         prefService.getBranch("dndicapture.").setBoolPref("auto.experimental", newValue);
     },
@@ -200,18 +215,21 @@ var dndiCapture = {
     AutoCapture: {
         //Callback information for registering
         QueryInterface: function (iid) {
-            if (iid.equals(Components.interfaces.nsIWebProgressListener) || iid.equals(Components.interfaces.nsISupportsWeakReference))
+            if (iid.equals(Components.interfaces.nsIWebProgressListener) || iid.equals(Components.interfaces.nsISupportsWeakReference)) {
                 return this;
+			}
             throw Components.results.NS_NOINTERFACE;
         },
         onStateChange: function (webProgress, request, stateFlags, status) {
-            if (stateFlags == 0x80010) {
+            if (stateFlags === 0x80010) {
                 if (this.running) {
-                    dndiCapture.sendCapture(function(xhr) {
+                    dndiCapture.sendCapture(function (xhr) {
                         var myself = dndiCapture.AutoCapture;
-                        if (xhr.responseText.match("^FATAL:") == "FATAL:") {
+                        if (xhr.responseText.match("^FATAL:") === "FATAL:") {
                             myself.stopAutomation();
-                        } else if (myself.autoAdvance) myself.advanceToNextEntry();
+                        } else if (myself.autoAdvance) { 
+						    myself.advanceToNextEntry();
+						}
                     });
                 }
             }
@@ -219,17 +237,17 @@ var dndiCapture = {
         running: false,
         autoAdvance: false,
         contentWindow: null,
-        unregister: function() {
-            if (this.contentWindow != null) {
+        unregister: function () {
+            if (this.contentWindow !== null) {
                 var wp = this.contentWindow.webNavigation.QueryInterface(Components.interfaces.nsIWebProgress);
                 wp.removeProgressListener(this);
             }
         },
-        register: function() {
+        register: function () {
             var wp = this.contentWindow.webNavigation.QueryInterface(Components.interfaces.nsIWebProgress);
             wp.addProgressListener(this, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW);
         },
-        startAutomation: function(autoNext) {
+        startAutomation: function (autoNext) {
             var mainWindow = window.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
                     .getInterface(Components.interfaces.nsIWebNavigation)
                     .QueryInterface(Components.interfaces.nsIDocShellTreeItem)
@@ -241,44 +259,51 @@ var dndiCapture = {
             this.autoAdvance = autoNext;
             this.register();
         },
-        stopAutomation: function() {
+        stopAutomation: function () {
             this.running = false;
             this.unregister();
         },
-        advanceToNextEntry: function() {
+        advanceToNextEntry: function () {
             var button = this.contentWindow.contentDocument.getElementById("GB_middle");
-            if (button && button.children[2].getAttribute("class").indexOf("disabled") == -1) {
+            if (button && button.children[2].getAttribute("class").indexOf("disabled") === -1) {
                 try {
                     dndiCapture.executeJSOnTarget(this.contentWindow.contentWindow, "GB_CURRENT.switchNext();");
-                } catch(e) {
-                    if (e.name == "ReferenceError") alert("You must be view multiple compendium entries to use this feature.");
-                    else if (e.name == "TypeError") alert("Select on of the entries to start the mass capture.");
-                    else alert("Unexpected error looking for GreyBar: " + e);
-                    if (lsnr) lsnr.stop = true;
+                } catch (e) {
+                    if (e.name === "ReferenceError") {
+					    alert("You must be view multiple compendium entries to use this feature.");
+					} else if (e.name === "TypeError") {
+					    alert("Select on of the entries to start the mass capture.");
+                    } else {
+					    alert("Unexpected error looking for GreyBar: " + e);
+					}
+					this.stopAutomation();
                 }
             }
         }
     },
 
-    warnUser: function(title, text) {
+    warnUser: function (title, text) {
         var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
         promptService.alert(this.getMainWindow, title, text);
     },
 
-    executeJSOnTarget: function(tgtWin, evalString) {
-        var win = tgtWin.content.wrappedJSObject;
-        var sb = new Components.utils.Sandbox(win);
+    executeJSOnTarget: function (tgtWin, evalString) {
+        var win = tgtWin.content.wrappedJSObject,
+            sb = new Components.utils.Sandbox(win);
         sb.window = win;
         return Components.utils.evalInSandbox("with(window){" + evalString + "}", sb);
     },
 
-    confirmAutomation: function() {
-        var aware = this.getExperimentalAware();
-        if (aware) return true; // Skip if user said he knows
+    confirmAutomation: function () {
+        var aware = this.getExperimentalAware(),
+		    warned = {value: aware},
+            ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService),
+            rv;
+		if (aware) {
+		    return true; // Skip if user said he knows
+		}
 
-        var warned = {value: aware};
-        var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-        var rv = ps.confirmCheck(this.getMainWindow, "Experimental Feature",
+		rv = ps.confirmCheck(this.getMainWindow, "Experimental Feature",
                 "This is a experimental feature which will add automation to your browser. " +
                         "You should use this only if you are not doing anything important.\n" +
                         "You may have to close the browser if things don't work correctly.\n\nDo you want to activate?",
@@ -291,30 +316,33 @@ var dndiCapture = {
         return rv;
     },
 
-    startAutoCapture: function(event, autoNext) {
+    startAutoCapture: function (event, autoNext) {
         if (this.confirmAutomation()) {
             // Go ahead
-            this.withGetReply("/capture?has=auto", function(response) {
-                if (response == "true") {
+            this.withGetReply("/capture?has=reply-text", function (response) {
+                if (response === "true") {
                     dndiCapture.AutoCapture.startAutomation(autoNext);
                 } else {
                     dndiCapture.warnUser("Wrong Virtual Combat Cards Version", "The version of Virtual Combat Cards you are running does not support this automation. Please upgrade to version 1.4.0 or higher");
                 }
-            },
-                    function(code, response) {
-                        dndiCapture.warnUser("Virtual Combat Cards Server not found", "Failed to contact Virtual Combat Cards, please start it.");
-                    })
+            }, function (code, response) {
+                dndiCapture.warnUser("Virtual Combat Cards Server not found", "Failed to contact Virtual Combat Cards, please start it.");
+            });
         }
     },
-    stopAutoCapture: function(event) {
+    stopAutoCapture: function (event) {
         this.AutoCapture.stopAutomation();
     },
 
-    disableAutoNext: function() {
+    disableAutoNext: function () {
         var button = document.getElementById("dndiAutoNextOn");
-        if (button) button.setAttribute("hidden", true);
+        if (button) {
+		    button.setAttribute("hidden", true);
+		}
     },
-    init: function() {
-        if (!this.getEnableFullAuto()) this.disableAutoNext();
+    init: function () {
+        if (!this.getEnableFullAuto()) {
+		    this.disableAutoNext();
+		}
     }
-}
+};
