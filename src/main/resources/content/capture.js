@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-//$Id: capture.js 474 2009-12-13 15:12:41Z mailleux@gmail.com $
+//$Id$
 
 //JSLint predefined: ActiveXObject, window, Components, XPathResult, XMLSerializer
 var dndiCapture = {
