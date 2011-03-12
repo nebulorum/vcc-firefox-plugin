@@ -24,14 +24,13 @@
 <overlay id="dndiCaptureOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <script type="application/x-javascript" src="chrome://dndicapture/content/capture.js"/>
-    <toolbar id="PersonalToolbar">
-        <toolbarbutton id="Capture-Toolbar-Button"
+    <toolbarpalette id="BrowserToolbarPalette">
+        <toolbarbutton id="dndiCapture-Toolbar-Button"
                        tooltiptext="&dndiCaptureSidebar.captureTooltip;"
-                       class="chromeclass-toolbar-additional"
+                       class="toolbarbutton-1"
                        label="&dndiCaptureSidebar.captureTitle;"
                        oncommand="toggleSidebar('viewDNDICaptureSidebar');"/>
-    </toolbar>
-
+	</toolbarpalette>
     <menupopup id="viewSidebarMenu">
         <menuitem key="key_openDNDICaptureSidebar" observes="viewDNDICaptureSidebar"
                   label="&dndiCaptureSidebar.title;"/>

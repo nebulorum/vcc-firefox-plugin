@@ -1,15 +1,14 @@
-#Capture-Toolbar-Button {
-    list-style-image: url("chrome://dndicapture/skin/images/d20metal-24.png");
+#dndiCapture-Toolbar-Button {
+    list-style-image: url(chrome://dndicapture/skin/images/d20metal-24.png);
 }
 
-toolbar[iconsize="small"] #Capture-Toolbar-Button {
-    list-style-image: url("chrome://dndicapture/skin/images/d20metal-16.png");
+toolbar[iconsize="small"] #dndiCapture-Toolbar-Button  > .toolbarbutton-icon {
+    list-style-image: url(chrome://dndicapture/skin/images/d20metal-16.png);
+    width: 16px;
+    height: 16px;
 }
 
-#Capture-Toolbar-Button > .toolbarbutton-text {
-    display: -moz-box !important;
-    padding-top: 4px !important;
-}
+/***** Side bar stuff ******/
 
 #Compendium-Button > .toolbarbutton-text {
     display: -moz-box !important;
