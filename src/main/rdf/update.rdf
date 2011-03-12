@@ -89,7 +89,7 @@
                   <em:minVersion>2.5.*</em:minVersion>
                   <em:maxVersion>4.*</em:maxVersion>
                   <em:updateLink>http://www.exnebula.org/files/dndicapture/dndicapture-1.5.xpi</em:updateLink>
-                  <em:updateHash>sha1:bbcbdf5850b3430570ce3f94ad077185ff991ed4</em:updateHash>
+                  <em:updateHash>sha1:b62a226ffc87780659a9f65c50af7a602c1af78e</em:updateHash>
                 </RDF:Description>
               </em:targetApplication>
             </RDF:Description>
