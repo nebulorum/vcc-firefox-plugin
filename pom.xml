@@ -6,7 +6,7 @@
 
     <groupId>dndicapture</groupId>
     <artifactId>dndicapture</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <description>VCC Firefox Extension</description>
     <organization>
         <name>exnebula.org</name>

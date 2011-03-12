@@ -80,6 +80,21 @@
             </RDF:Description>
           </RDF:li>
 
+          <RDF:li>
+            <RDF:Description>
+              <em:version>1.5</em:version>
+              <em:targetApplication>
+                <RDF:Description>
+                  <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                  <em:minVersion>2.5.*</em:minVersion>
+                  <em:maxVersion>4.*</em:maxVersion>
+                  <em:updateLink>http://www.exnebula.org/files/dndicapture/dndicapture-1.5.xpi</em:updateLink>
+                  <em:updateHash>sha1:bbcbdf5850b3430570ce3f94ad077185ff991ed4</em:updateHash>
+                </RDF:Description>
+              </em:targetApplication>
+            </RDF:Description>
+          </RDF:li>
+
       </RDF:Seq>
     </em:updates>
 </RDF:RDF>
