@@ -1,3 +1,5 @@
+/*global window, Components, ActiveXObject, BrowserToolboxCustomizeDone, XPathResult, XMLSerializer*/
+/*jslint white: true, onevar: true, undef: true, newcap: true, nomen: true, regexp: true, plusplus: true, bitwise: true, devel: true, browser: true, windows: true, maxerr: 50, indent: 4 */
 /**
  * Copyright (C) 2008-2010 - Thomas Santana <tms@exnebula.org>
  *
@@ -15,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 //$Id$
-
-//JSLint predefined: ActiveXObject, window, Components, XPathResult, XMLSerializer
 var dndiCapture = {
     getHTTPRequest: function () {
         try {
@@ -70,10 +70,10 @@ var dndiCapture = {
      */
     findSection: function () {
         var doc = window.content.document,
-		    id, 
-			data, 
-			ndata, 
-			res;
+            id, 
+            data, 
+            ndata, 
+            res;
 
         while (doc !== null) {
             data = doc.getElementById("detail");
@@ -92,7 +92,7 @@ var dndiCapture = {
                 doc = res.singleNodeValue.contentWindow.document;
             } else {
                 doc = null;
-			}
+            }
         }
         return null;
     },
@@ -101,8 +101,8 @@ var dndiCapture = {
     sendCapture: function (callback) {
         var url = this.getVCCURL() + "/capture?reply=plugin-text",
             data = this.findSection(),
-			xmlHttp = this.getHTTPRequest(),
-			serializer = new XMLSerializer();
+            xmlHttp = this.getHTTPRequest(),
+            serializer = new XMLSerializer();
 
         if (!data) {
             this.warnUser("Wrong page", "The page does not seem to contain and capturable data, must be a D&D Insider result page.");
@@ -111,7 +111,7 @@ var dndiCapture = {
         data = serializer.serializeToString(data);
 
         xmlHttp.onreadystatechange = function () {
-		    var fields;
+            var fields;
             if (xmlHttp.readyState === 4) {
                 if (xmlHttp.status === 200) {
                     fields = xmlHttp.responseText.split(":");
@@ -119,10 +119,10 @@ var dndiCapture = {
                         dndiCapture.addResult(fields[1], fields[0]);
                     } else {
                         dndiCapture.addResult(fields[0], "-");
-					}
+                    }
                     if (callback) {
-					    callback(xmlHttp);
-					}
+                        callback(xmlHttp);
+                    }
                 } else {
                     dndiCapture.addResult("Failed to contact VCC", "Failed");
                     dndiCapture.AutoCapture.stopAutomation();
@@ -149,12 +149,12 @@ var dndiCapture = {
             if (xmlHttp.readyState === 4) {
                 if (xmlHttp.status === 200) {
                     if (okCallback) {
-					    okCallback(xmlHttp.responseText);
-					}
+                        okCallback(xmlHttp.responseText);
+                    }
                 } else {
                     if (errorCallback) { 
-					    errorCallback(xmlHttp.status, xmlHttp.responseText);
-					}
+                        errorCallback(xmlHttp.status, xmlHttp.responseText);
+                    }
                 }
             }
         };
@@ -181,7 +181,7 @@ var dndiCapture = {
             branch = prefService.getBranch("dndicapture.");
         if (!branch.prefHasUserValue("vcc.url")) {
             branch.setCharPref("vcc.url", "http://127.0.0.1:4143");
-		}
+        }
         return branch.getCharPref("vcc.url");
     },
 
@@ -190,7 +190,7 @@ var dndiCapture = {
             branch = prefService.getBranch("dndicapture.");
         if (!branch.prefHasUserValue("auto.experimental")) {
             branch.setBoolPref("auto.experimental", false);
-		}
+        }
         return branch.getBoolPref("auto.experimental");
     },
 
@@ -199,13 +199,24 @@ var dndiCapture = {
             branch = prefService.getBranch("dndicapture.");
         if (!branch.prefHasUserValue("auto.full")) {
             branch.setBoolPref("auto.full", false);
-		}
+        }
         return branch.getBoolPref("auto.full");
     },
 
     setExperimentalAware: function (newValue) {
         var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService);
         prefService.getBranch("dndicapture.").setBoolPref("auto.experimental", newValue);
+    },
+
+    shouldAddButton: function () {
+        var prefService = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService),
+            branch = prefService.getBranch("dndicapture.");
+        if (!branch.prefHasUserValue("addedButton")) {
+            branch.setBoolPref("addedButton", true);
+            return true;
+        } else {
+            return false;
+        }
     },
 
     doCapture: function (event) {
@@ -217,7 +228,7 @@ var dndiCapture = {
         QueryInterface: function (iid) {
             if (iid.equals(Components.interfaces.nsIWebProgressListener) || iid.equals(Components.interfaces.nsISupportsWeakReference)) {
                 return this;
-			}
+            }
             throw Components.results.NS_NOINTERFACE;
         },
         onStateChange: function (webProgress, request, stateFlags, status) {
@@ -228,8 +239,8 @@ var dndiCapture = {
                         if (xhr.responseText.match("^FATAL:") === "FATAL:") {
                             myself.stopAutomation();
                         } else if (myself.autoAdvance) { 
-						    myself.advanceToNextEntry();
-						}
+                            myself.advanceToNextEntry();
+                        }
                     });
                 }
             }
@@ -270,13 +281,13 @@ var dndiCapture = {
                     dndiCapture.executeJSOnTarget(this.contentWindow.contentWindow, "GB_CURRENT.switchNext();");
                 } catch (e) {
                     if (e.name === "ReferenceError") {
-					    alert("You must be view multiple compendium entries to use this feature.");
-					} else if (e.name === "TypeError") {
-					    alert("Select on of the entries to start the mass capture.");
+                        alert("You must be view multiple compendium entries to use this feature.");
+                    } else if (e.name === "TypeError") {
+                        alert("Select on of the entries to start the mass capture.");
                     } else {
-					    alert("Unexpected error looking for GreyBar: " + e);
-					}
-					this.stopAutomation();
+                        alert("Unexpected error looking for GreyBar: " + e);
+                    }
+                    this.stopAutomation();
                 }
             }
         }
@@ -296,14 +307,14 @@ var dndiCapture = {
 
     confirmAutomation: function () {
         var aware = this.getExperimentalAware(),
-		    warned = {value: aware},
+            warned = {value: aware},
             ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService),
             rv;
-		if (aware) {
-		    return true; // Skip if user said he knows
-		}
+        if (aware) {
+            return true; // Skip if user said he knows
+        }
 
-		rv = ps.confirmCheck(this.getMainWindow, "Experimental Feature",
+        rv = ps.confirmCheck(this.getMainWindow, "Experimental Feature",
                 "This is a experimental feature which will add automation to your browser. " +
                         "You should use this only if you are not doing anything important.\n" +
                         "You may have to close the browser if things don't work correctly.\n\nDo you want to activate?",
@@ -337,12 +348,37 @@ var dndiCapture = {
     disableAutoNext: function () {
         var button = document.getElementById("dndiAutoNextOn");
         if (button) {
-		    button.setAttribute("hidden", true);
-		}
+            button.setAttribute("hidden", true);
+        }
     },
     init: function () {
         if (!this.getEnableFullAuto()) {
-		    this.disableAutoNext();
-		}
+            this.disableAutoNext();
+        }
+    },
+    addToolbarButton: function () {
+        var myId    = "dndiCapture-Toolbar-Button",
+            beforeId = "urlbar-container",
+            navBar  = document.getElementById("nav-bar"),
+            curSet  = navBar.currentSet.split(","),
+            pos = curSet.indexOf(beforeId) + 1 || curSet.length,
+            set = curSet.slice(0, pos - 1).concat(myId).concat(curSet.slice(pos - 1));
+
+        if (!this.shouldAddButton()) {
+            return;
+        }
+
+        if (curSet.indexOf(myId) === -1) {
+
+            navBar.setAttribute("currentset", set.join(","));
+            navBar.currentSet = set.join(",");
+            document.persist(navBar.id, "currentset");
+            try {
+                BrowserToolboxCustomizeDone(true);
+            } catch (e) {}
+        }
     }
 };
+
+window.addEventListener("load", function () { dndiCapture.addToolbarButton(); }, false);
+
